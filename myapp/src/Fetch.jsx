@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-// ponytail: simple clean catalog fetching logic with fallback
+// ponytail: simple clean catalog fetching logic with fallback & cart handler
 const FALLBACK_PRODUCTS = [
   {
     id: 1,
@@ -32,9 +32,10 @@ const FALLBACK_PRODUCTS = [
   }
 ]
 
-const Fetch = () => {
+const Fetch = ({ onAddToCart }) => {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
+  const [addedId, setAddedId] = useState(null)
 
   useEffect(() => {
     setLoading(true)
@@ -61,6 +62,14 @@ const Fetch = () => {
         setLoading(false)
       })
   }, [])
+
+  const handleAdd = (product) => {
+    if (onAddToCart) {
+      onAddToCart(product)
+    }
+    setAddedId(product.id)
+    setTimeout(() => setAddedId(null), 1000)
+  }
 
   return (
     <div>
@@ -91,8 +100,11 @@ const Fetch = () => {
                 <h3 className="product-name" title={product.title}>{product.title}</h3>
                 <div className="product-bottom">
                   <span className="product-price-value">${Number(product.price).toFixed(2)}</span>
-                  <button className="btn-secondary" onClick={() => alert(`Added "${product.title}" to cart`)}>
-                    Add to Cart
+                  <button 
+                    className="btn-secondary" 
+                    onClick={() => handleAdd(product)}
+                  >
+                    {addedId === product.id ? '✓ Added' : 'Add to Cart'}
                   </button>
                 </div>
               </div>
